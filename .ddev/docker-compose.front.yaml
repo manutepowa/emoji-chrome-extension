@@ -1,0 +1,28 @@
+version: '3.6'
+
+services:
+  front:
+    container_name: ddev-${DDEV_SITENAME}-front
+    build:
+      context: mydocker/front
+    ports:
+      - 4002
+    volumes:
+      - ../front:/home/node/app
+    working_dir: /home/node/app
+    user: "node"
+    labels:
+      com.ddev.site-name: ${DDEV_SITENAME}
+      com.ddev.approot: $DDEV_APPROOT
+      com-ddev-app-url: front.ddev.site
+    stdin_open: true
+    tty: true
+    external_links:
+      - "ddev-router:${DDEV_SITENAME}.ddev.site"
+    environment:
+      - VIRTUAL_HOST=front.ddev.site
+      - HTTP_EXPOSE=4002:4002
+      - HTTPS_EXPOSE=3002:4002
+      # Para tener SSL con estos docker compose, tenemos que exponer solo un puerto por ejemplo 4002
+      # en el package.json también hacemos el npm run a ese puerto 4002
+      # Y después solo usamos el puerto 3002 HTTPS_EXPOSE=3002:4002 para que redirija a HTTPS
